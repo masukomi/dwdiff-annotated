@@ -1,0 +1,269 @@
+# Copyright (C) 2006-2011 G.P. Halkes
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3, as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+SWITCHES="+gettext +unicode +dwfilter"
+OPTIONS="localedir icu-config"
+
+COMPILERULE='$(CC) $(CFLAGS) $(GETTEXTFLAGS) $(ICUFLAGS) -c -o $@ $<'
+LINKRULE='$(CC) $(CFLAGS) $(LDFLAGS) -o .config .config.o $(LDLIBS) $(GETTEXTLIBS) $(ICULIBS)'
+
+USERRULES='.SUFFIXES: .mo .po
+.po.mo:
+	msgfmt -o $@ $<
+'
+
+TEST_INSTALL="install $PWD/install.sh"
+
+DEFAULT_LINGUAS=" de es fr nl"
+[ -f config.pkg.langpack ] && . config.pkg.langpack
+
+USER_HELP="  --without-gettext  Disable gettext translations
+  --without-unicode  Disable Unicode support
+  --icu-config=<path>  Path to icu-config script
+  --localedir=<dir>  Installation directory for locales [prefix/share/locale]
+
+Environment variables:
+  LINGUAS            List of languages to install. Available languages are:
+    ${DEFAULT_LINGUAS}"
+
+checkfunction() {
+	clean .config.o
+
+	CHECKFOR="$1"
+	CODE="$2"
+	shift 2
+	{
+		for INCLUDE
+		do
+			echo "#include ${INCLUDE}"
+		done
+		cat <<EOF
+int main(int argc, char *argv[]) {
+	${CODE}
+	return 0;
+}
+EOF
+	} > .config.c
+
+	clean .config.o
+	test_link "${CHECKFOR}"
+}
+
+config() {
+	# Test for all required functionality
+
+	cat > .config.c <<EOF
+#include <stdlib.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <fcntl.h>
+
+int main(int argc, char *argv[]) {
+	int fd;
+	char buffer[10];
+	fd = mkstemp("fooXXXXXX");
+	fd = open("foo", O_RDONLY);
+	read(fd, buffer, 10);
+	lseek(fd, 0, SEEK_SET);
+	write(fd, buffer, 10);
+	close(fd);
+	umask(~S_IRWXU);
+	snprintf(buffer, 10, "%s", "foo");
+	return 0;
+}
+EOF
+
+	clean .config.o
+
+	test_link "required functions" || {
+		check_message_result "Testing required functions seperatly for debugging purposes"
+
+		checkfunction "mkstemp" 'int fd; fd = mkstemp("fooXXXXXX");' "<stdlib.h>"
+		checkfunction "open" 'int fd; fd = open("foo", O_RDONLY);' "<unistd.h>" "<fcntl.h>"
+		checkfunction "read" 'int fd; char buffer[10]; read(fd, buffer, 10);' "<unistd.h>"
+		checkfunction "lseek" "int fd; lseek(fd, 0, SEEK_SET);" "<unistd.h>"
+		checkfunction "write" "int fd; char buffer[10]; write(fd, buffer, 10);" "<unistd.h>"
+		checkfunction "close" 'int fd; close(fd);' "<unistd.h>"
+		checkfunction "umask" 'umask(~S_IRWXU);' "<sys/stat.h>"
+		checkfunction "snprintf" 'char buffer[10]; snprintf(buffer, 10, "%s", "foo");' "<stdio.h>"
+		check_message_result "!! A required function is not available."
+		exit 1
+	}
+
+	if [ "yes" = "${with_dwfilter}" ] ; then
+		cat > .config.c <<EOF
+#include <sys/types.h>
+#include <unistd.h>
+
+int main(int argc, char *argv[]) {
+	pid_t pid = fork();
+	execvp("test", NULL);
+}
+EOF
+		clean .config.o
+
+		test_link "required functions for dwfilter" || {
+			checkfunction "fork" 'pid_t pid = fork();' "<unistd.h>" "<sys/types.h>"
+			checkfunction "execvp" 'execvp("test", NULL);' "<unistd.h>"
+			check_message_result "!! A required function for dwfilter is not availabe. Try configuring with --without-dwfilter"
+			exit 1
+		}
+		DWFILTER="DWFILTER=yes"
+	else
+		DWFILTER="DWFILTER="
+	fi
+
+	checkfunction "strdup" "strdup(\"foo\");" "<string.h>" || CFLAGS="${CFLAGS} -DNO_STRDUP"
+
+	if [ "yes" = "${with_gettext}" ] || [ "yes" = "${with_unicode}" ] ; then
+		checkfunction "setlocale" "setlocale(LC_ALL, \"\");" "<locale.h>" || {
+			check_message_result "!! Gettext and Unicode support unavailable. Try configuring with --without-gettext --without-unicode"
+			exit 1
+		}
+	fi
+
+	unset GETTEXTFLAGS GETTEXTLIBS linguas LOCALEDIR
+	# Check for gettext functionality
+	if [ "yes" = "${with_gettext}" ] ; then
+		cat > .config.c <<EOF
+#include <locale.h>
+#include <libintl.h>
+
+int main(int argc, char *argv[]) {
+	setlocale(LC_ALL, "");
+	bindtextdomain("dwdiff", "/usr/share/locale");
+	textdomain("dwdiff");
+	gettext("dwdiff");
+	return 0;
+}
+EOF
+		{
+			test_compile "gettext and related functions" && {
+				test_link "gettext in standard library" ||
+				{ test_link "gettext in -lintl" GETTEXTLIBS=-lintl && GETTEXTLIBS=-lintl ; } ||
+				{ test_link "gettext in -lintl -liconv" "GETTEXTLIBS=-lintl -liconv" && GETTEXTLIBS="-lintl -liconv" ; }
+			} && {
+				clean .config.po .config.mo
+				cat > .config.po <<EOF
+msgid  "msg"
+msgstr "translation"
+EOF
+				check_message "Checking for msgfmt... "
+				if test_make .config.mo >> config.log 2>&1 ; then
+					check_message_result "yes"
+					true
+				else
+					check_message_result "no"
+					false
+				fi
+			}
+		} || {
+			clean .config.po .config.mo
+			check_message_result "!! Could not compile with gettext. Try configuring with --without-gettext."
+			exit 1
+		}
+		GETTEXTFLAGS="-DUSE_GETTEXT"
+		clean .config.po .config.mo
+
+		unset linguas
+		if [ -n "${LINGUAS+set}" ] ; then
+			check_message "Checking for available selected translations... "
+			for lingua in ${LINGUAS}
+			do
+				if [ -f "po/${lingua}.po" ] && echo "${linguas}" | not grep "^\\(.* \\)*${lingua}\\( .*\\)*$" > /dev/null ; then
+					linguas="${linguas}${linguas:+ }${lingua}"
+				fi
+			done
+			check_message_result "done [${linguas}]"
+		else
+			linguas="${DEFAULT_LINGUAS}"
+		fi
+	fi
+
+	if [ "yes" = "${with_unicode}" ] ; then
+		ICU_CONFIG="${option_icu_config:-icu-config}"
+		{
+			{
+				check_message "Checking for icu-config... "
+				echo "Running which ${ICU_CONFIG} >/dev/null" >> config.log
+				if not which "${ICU_CONFIG}" >/dev/null ; then
+					check_message_result "no"
+					check_message_result "!! Could not find icu-config. Ensure that you have installed the development files for libicu, or try configuring with --without-unicode"
+					exit 1
+				fi
+
+				echo "Running ${ICU_CONFIG} --cppflags --ldflags" >> config.log
+				if "${ICU_CONFIG}" --cppflags --ldflags 2>&1 > /dev/null ; then
+					check_message_result "yes"
+					true
+				else
+					check_message_result "no"
+					false
+				fi
+			} && {
+				check_message "Checking ICU version >= 3.4... "
+				echo "Running ${ICU_CONFIG} --version" >> config.log
+				ICUVERSION="`\"${ICU_CONFIG}\" --version`"
+				ICUMAJOR="`echo \"${ICUVERSION}\" | sed 's/\..*//'`"
+				ICUMINOR="`echo \"${ICUVERSION}\" | sed -e 's/^[^.]*\.//' -e 's/[^0-9]*$//'`"
+				if expr 3 \< "${ICUMAJOR}" \| \( 3 = "${ICUMAJOR}" \& 4 \<= "${ICUMINOR}" \) >/dev/null ; then
+					check_message_result "yes (${ICUVERSION})"
+					true
+				else
+					check_message_result "no (${ICUVERSION})"
+					false
+				fi
+			} && {
+				cat > .config.c <<EOF
+#include <unicode/uchar.h>
+#include <unicode/unorm.h>
+#include <unicode/ustring.h>
+
+int main(int argc, char *argv[]) {
+	UChar32 c;
+	UChar *a, *b;
+	UErrorCode error = U_ZERO_ERROR;
+
+	u_isUWhiteSpace(c);
+	U_GET_GC_MASK(c);
+	u_strFoldCase(a, 10, b, 10, U_FOLD_CASE_DEFAULT, &error);
+	unorm_normalize(a, 10, UNORM_NFKD, 0, b, 10, &error);
+	u_getIntPropertyValue(c, UCHAR_GRAPHEME_CLUSTER_BREAK);
+	return 0;
+}
+EOF
+				clean .config.o
+				test_link "functions in libicu" ICUFLAGS="\`\"${ICU_CONFIG}\" --cppflags\`" ICULIBS="\`\"${ICU_CONFIG}\" --ldflags\`"
+			}
+		} || {
+			check_message_result "!! Could not compile with Unicode support. Try configuring with --without-unicode."
+			exit 1
+		}
+
+		ICUFLAGS="-DUSE_UNICODE \`\"${ICU_CONFIG}\" --cppflags\`"
+		ICULIBS="\`\"${ICU_CONFIG}\" --ldflags\`"
+		if checkfunction "nl_langinfo" "nl_langinfo(CODESET);" "<langinfo.h>" ; then
+			ICUFLAGS="${ICUFLAGS} -DUSE_NL_LANGINFO"
+		fi
+	fi
+
+	create_makefile "GETTEXTFLAGS=${GETTEXTFLAGS}" "GETTEXTLIBS=${GETTEXTLIBS}" \
+		"LINGUAS=${linguas}" ${option_localedir:+"LOCALEDIR=${option_localedir}"} \
+		"ICUFLAGS=${ICUFLAGS}" "ICULIBS=${ICULIBS}" $DWFILTER
+}
+
+sed_lines() {
+	add_replace_settings "$@"
+}

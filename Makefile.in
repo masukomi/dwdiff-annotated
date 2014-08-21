@@ -1,0 +1,110 @@
+# Copyright (C) 2006-2010 G.P. Halkes
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 3, as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+.POSIX:
+
+# C-compiler flags
+# If strdup is not provided by the library, add -DNO_STRDUP.
+CFLAGS=-O2
+
+# Installation prefix
+prefix=/usr/local
+
+# Gettext configuration
+# GETTEXTFLAGS should contain -DUSE_GETTEXT to enable gettext translations
+# GETTEXTLIBS should contain all link flags to allow linking with gettext, if
+# it has been enabled. The GNU libc already contains the gettext library, so
+# there is no need to add any flags. Otherwise, -lintl is usually required, and
+# sometimes -liconv as well.
+GETTEXTFLAGS=
+GETTEXTLIBS=
+
+# Gettext related
+# LOCALEDIR: the directory where the locale dependant files should be installed.
+# LINGUAS: translations to be installed. Look in po directory for available
+#  translations.
+LOCALEDIR=$(prefix)/share/locale
+LINGUAS=
+
+# Unicode/ICU config
+# If unicode support is to be enabled, the following flags should be set
+# ICUFLAGS: should at least be set to -DUSE_UNICODE. If the nl_langinfo
+#  function is available it should also include -DUSE_NL_LANGINFO. Furthermore
+#  it should include any C preprocessor flags that are required for building.
+#  Usually this can be `icu-config --cppflags`.
+# ICULIBS: Flags to link to ICU, usually `icu-config --ldflags`
+ICUFLAGS=
+ICULIBS=
+
+# Install program to use (should provide -m and -d options)
+INSTALL=install
+
+# dwfilter on/off. To disable the compilation of dwfilter, comment the next
+# line or set DWFILTER to empty
+DWFILTER=yes
+
+# Miscelaneous install paths
+bindir=$(prefix)/bin
+docdir=$(prefix)/share/doc/dwdiff-2.0.9
+mandir=$(prefix)/share/man
+
+all: dwdiff $(DWFILTER:yes=dwfilter) linguas
+
+.PHONY: all clean dist-clean install dwdiff-install lingua-install linguas
+
+CSOURCES_DWDIFF=src/buffer.c src/diff/analyze.c src/doDiff.c src/dwdiff.c src/file.c src/hashtable.c src/option.c src/stream.c src/tempfile.c src/unicode.c src/util.c
+OBJECTS_DWDIFF=$(CSOURCES_DWDIFF:.c=.o)
+CSOURCES_DWFILTER=src/dwfilter.c src/util.c
+OBJECTS_DWFILTER=$(CSOURCES_DWFILTER:.c=.o)
+
+clean:
+	rm -rf src/*.o po/*.mo
+
+dist-clean: clean
+	rm -rf dwdiff config.log Makefile
+
+.c.o:
+	$(CC) $(CFLAGS) -Isrc $(GETTEXTFLAGS) -DLOCALEDIR=\"$(LOCALEDIR)\" $(ICUFLAGS) -c -o $@ $<
+
+dwdiff: $(OBJECTS_DWDIFF)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o dwdiff $(OBJECTS_DWDIFF) $(LDLIBS) $(ICULIBS) $(GETTEXTLIBS)
+
+dwfilter: $(OBJECTS_DWFILTER)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o dwfilter $(OBJECTS_DWFILTER) $(LDLIBS) $(ICULIBS) $(GETTEXTLIBS)
+
+
+linguas:
+	cd po && $(MAKE) "LINGUAS=$(LINGUAS)" linguas
+
+# Macros to make DESTDIR support more readable
+_bindir=$(DESTDIR)$(bindir)
+_docdir=$(DESTDIR)$(docdir)
+_mandir=$(DESTDIR)$(mandir)
+
+install: dwdiff-install lingua-install
+
+dwdiff-install: dwdiff $(DWFILTER:yes=dwfilter)
+	$(INSTALL) -d "$(_bindir)"
+	$(INSTALL) dwdiff "$(_bindir)"
+	if [ -n "$(DWFILTER)" ] ; then $(INSTALL) dwfilter "$(_bindir)" ; fi
+	$(INSTALL) -d "$(_mandir)/man1"
+	$(INSTALL) -m 644 "man/dwdiff.1" "$(_mandir)/man1"
+	if [ -n "$(DWFILTER)" ] ; then $(INSTALL) -m 644 "man/dwfilter.1" "$(_mandir)/man1" ; fi
+	$(INSTALL) -d "$(_docdir)"
+	$(INSTALL) -m 644 README COPYING Changelog "$(_docdir)"
+
+# Work around empty LINGUAS list. Some shells don't like empty lists in for-loops
+lingua-install:
+	if [ -n "$(LINGUAS)" ] ; then \
+		mandir="$(_mandir)" LINGUAS="$(LINGUAS)" INSTALL="$(INSTALL)" ./install-manpages $(DWFILTER) ;\
+		cd po && $(MAKE) "LOCALEDIR=$(DESTDIR)$(LOCALEDIR)" "INSTALL=$(INSTALL)" "LINGUAS=$(LINGUAS)" lingua-install ;\
+	fi

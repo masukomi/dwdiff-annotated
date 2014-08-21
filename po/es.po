@@ -1,0 +1,465 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Translators:
+# Jesús Franco <tezcatl@fedoraproject.org>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: dwdiff\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-01-31 20:18+0100\n"
+"PO-Revision-Date: 2011-06-05 06:12+0000\n"
+"Last-Translator: Jesús Franco <jefrancomix@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: util.h:28 util.h:30
+#, c-format
+msgid "Program-logic error at %s:%d\n"
+msgstr "Error lógico del programa en %s:%d\n"
+
+#: doDiff.c:209 doDiff.c:246 doDiff.c:274 doDiff.c:296 doDiff.c:350
+#: doDiff.c:360 doDiff.c:533
+msgid "Error reading back input\n"
+msgstr "Error al leer de nuevo la entrada\n\n"
+
+#: doDiff.c:584 doDiff.c:586 dwdiff.c:277 dwdiff.c:280 dwdiff.c:289
+#: dwfilter.c:147
+#, c-format
+msgid "Could not create temporary file: %s\n"
+msgstr "No se pudo crear el archivo temporal: %s\n"
+
+#: dwdiff.c:274 dwdiff.c:418
+#, c-format
+msgid "Can't open file %s: %s\n"
+msgstr "No se puede abrir archivo %s: %s\n"
+
+#: dwdiff.c:359
+#, c-format
+msgid "Error reading file %s: %s\n"
+msgstr "Error al leer el archivo %s: %s\n"
+
+#: dwdiff.c:378 dwdiff.c:383 dwdiff.c:388
+#, c-format
+msgid "Error writing to temporary file %s: %s\n"
+msgstr "Error al escribir en archivo temporal %s: %s\n"
+
+#: dwdiff.c:562
+#, c-format
+msgid "old: 0 words\n"
+msgstr "Precedente: 0 palabras\n"
+
+#: dwdiff.c:564
+#, c-format
+msgid "old: %d words  %d %d%% common  %d %d%% deleted  %d %d%% changed\n"
+msgstr "Precedente: %d words  %d %d%% en común %d %d%% suprimidas  %d %d%% cambiaron\n\n"
+
+#: dwdiff.c:571
+#, c-format
+msgid "new: 0 words\n"
+msgstr "Nuevo: 0 palabras\n"
+
+#: dwdiff.c:573
+#, c-format
+msgid "new: %d words  %d %d%% common  %d %d%% inserted  %d %d%% changed\n"
+msgstr "Nuevo: %d palabras  %d %d%% en común  %d %d%% añadidas  %d %d%% cambiaron\n"
+
+#: dwfilter.c:58
+#, c-format
+msgid ""
+"Usage: dwfilter [OPTIONS] <OLD FILE> <NEW FILE> <POST PROCESSOR> [POST "
+"PROCESSOR OPTIONS]\n"
+msgstr "Modo de uso: dwfilter [OPCIONES] <ARCHIVO ANTIGUO> <ARCHIVO NUEVO> <POST PROCESADOR> [OPCIONES DE POSTPROCESO]\n"
+
+#. TRANSLATORS:
+#. - If the (C) symbol (that is the c in a circle) is not available,
+#. leave as it as is. (Unicode code point 0x00A9)
+#. - G.P. Halkes is name and should be left as is.
+#: dwfilter.c:70 option.c:535
+msgid ""
+"Copyright (C) 2006-2011 G.P. Halkes\n"
+"Licensed under the GNU General Public License version 3\n"
+msgstr "Copyright (C) 2006-2011 G.P. Halkes\nLiberado bajo los términos de la Licencia Pública General de GNU Versión 3\n"
+
+#. TRANSLATORS:
+#. - If the (C) symbol (that is the c in a circle) is not available,
+#. leave as it as is. (Unicode code point 0x00A9)
+#. - G.P. Halkes is name and should be left as is.
+#: dwfilter.c:70 option.c:535
+msgid ""
+"Copyright (C) 2006-2011 G.P. Halkes and others\n"
+"Licensed under the GNU General Public License version 3\n"
+msgstr "Copyright (C) 2006-2011 G.P. Halkes y otros\nLiberado bajo los términos de la Licencia Pública General de GNU Versión 3\n"
+
+#: dwfilter.c:108 option.c:693 option.c:702
+#, c-format
+msgid "Option %.*s does not exist\n"
+msgstr "La opción %.*s no existe\n"
+
+#: dwfilter.c:125 option.c:723
+msgid "Need two files to compare\n"
+msgstr "Se necesitan dos archivos para comparar\n"
+
+#: dwfilter.c:127
+msgid "No post processor specified\n"
+msgstr "No se especificó un postprocesador\n"
+
+#: dwfilter.c:159
+#, c-format
+msgid "Could not execute %s: %s\n"
+msgstr "No se puede ejecutar %s: %s\n"
+
+#: dwfilter.c:163
+#, c-format
+msgid "Error waiting for child process to terminate: %s\n"
+msgstr "Ocurrió un error esperando que terminara el proceso hijo: %s\n"
+
+#: dwfilter.c:210
+msgid "dwdiff returned an error\n"
+msgstr "dwdiff devolvió un error\n"
+
+#: optionMacros.h:168
+#, c-format
+msgid "Option %.*s does not take an argument\n"
+msgstr "La opción %.*s no admite argumentos\n"
+
+#: optionMacros.h:174
+#, c-format
+msgid "Option %.*s requires an argument\n"
+msgstr "La opción %.*s requiere un argumento\n"
+
+#: optionMacros.h:258
+#, c-format
+msgid "Garbage after value for %.*s option\n"
+msgstr "Basura después de valor para la opción %.*s\n"
+
+#: optionMacros.h:261
+#, c-format
+msgid "Value for %.*s option (%ld) is out of range\n"
+msgstr "El valor para la opción %.*s (%ld) está fuera de rango\n"
+
+#: optionMacros.h:295
+#, c-format
+msgid "Value for %.*s option (%s) is not a valid boolean value\n"
+msgstr "El valor para la opción %.*s (%s) no es un valor booleano válido\n"
+
+#: optionDescriptions.h:20
+msgid "-h, --help                             Print this help message\n"
+msgstr "-h, --help                             Muestra este mensaje de ayuda\n"
+
+#: optionDescriptions.h:21
+msgid ""
+"-v, --version                          Print version and copyright "
+"information\n"
+msgstr "-v, --version                          Muestra versión e información de Copyright\n"
+
+#: optionDescriptions.h:24
+msgid "-d <delim>, --delimiters=<delim>       Specifiy delimiters\n"
+msgstr "-d <delim>, --delimiters=<delim>       Especifica delimitadores\n"
+
+#: optionDescriptions.h:25
+msgid ""
+"-P, --punctuation                      Use punctuation characters as "
+"delimiters\n"
+msgstr "-P, --punctuation                      Usa caracteres de puntuación como delimitadores\n"
+
+#: optionDescriptions.h:26
+msgid "-W <ws>, --white-space=<ws>            Specify whitespace characters\n"
+msgstr "-W <ws>, --white-space=<ws>            Especifica caracteres a tomar como espacios en blanco\n"
+
+#: optionDescriptions.h:28
+msgid ""
+"--diff-input                           Read the input as the output from "
+"diff\n"
+msgstr "--diff-input                           Lee tanto entrada como salida desde diff\n"
+
+#: optionDescriptions.h:29
+msgid ""
+"-S[<marker>], --paragraph-separator[=<marker>]  Show inserted or deleted blocks\n"
+"                               of empty lines, optionally overriding the marker\n"
+msgstr "-S[<marcador>], --paragraph-separator[=<marcador>]  Muestra bloques añadidos o suprimidos\n                               de líneas vacías, opcionalmente ignorando el marcador\n"
+
+#: optionDescriptions.h:33
+msgid "-1, --no-deleted                       Do not print deleted words\n"
+msgstr "-1, --no-deleted                       No mostrar palabras suprimidas\n"
+
+#: optionDescriptions.h:34
+msgid "-2, --no-inserted                      Do not print inserted words\n"
+msgstr "-2, --no-inserted                      No mostrar palabras añadidas\n"
+
+#: optionDescriptions.h:35
+msgid "-3, --no-common                        Do not print common words\n"
+msgstr "-3, --no-common                        No muestra palabras comunes\n"
+
+#: optionDescriptions.h:36
+msgid "-L[<width>], --line-numbers[<width>]   Prepend line numbers\n"
+msgstr "-L[<ancho>], --line-numbers[<ancho>]   Muestra números de línea al inicio\n"
+
+#: optionDescriptions.h:37
+msgid "-C<num>, --context=<num>               Show <num> lines of context\n"
+msgstr "-C<número>, --context=<número>               Muestra <número> líneas de contexto\n"
+
+#: optionDescriptions.h:38
+msgid "-s, --statistics                       Print statistics when done\n"
+msgstr "-s, --statistics                       Muestra estadísticas al terminar\n"
+
+#: optionDescriptions.h:40
+msgid "--wdiff-output                         Produce wdiff compatible output\n"
+msgstr "--wdiff-output                         Produce salida compatible con wdiff\n"
+
+#: optionDescriptions.h:43
+msgid "-i, --ignore-case                      Ignore differences in case\n"
+msgstr "-i, --ignore-case                      Ignorar diferencias en mayúsculas/minúsculas\n"
+
+#: optionDescriptions.h:44
+msgid "-I, --ignore-formatting                Ignore formatting differences\n"
+msgstr "-I, --ignore-formatting                Ignorar diferencias de presentación\n"
+
+#. TRANSLATORS:
+#. The context meant here are words preceeding and succeeding each word in
+#. the text. By using these extra context words when applying the diff
+#. program,
+#. frequently occuring words will be more likely to be matched to the
+#. correct corresponding word in the other text, thus giving a better result.
+#: optionDescriptions.h:51
+msgid ""
+"-m <num>, --match-context=<num>        Use <num> words of context for "
+"matching\n"
+msgstr "-m <número>, --match-context=<número>        Utiliza <número> de palabras de contexto para cotejo\n"
+
+#. TRANSLATORS:
+#. The use of context words for matching is more expensive, because after the
+#. first pass of diff the changes reported need refining. However, if the user
+#. can live with multiple changes that are within (2 * match-context + 1)
+#. words
+#. from eachother being reported as a single change, they can use this option.
+#: optionDescriptions.h:57
+msgid ""
+"--aggregate-changes                    Allow close changes to aggregate\n"
+msgstr "--aggregate-changes                    Permitir agregar cambios cercanos\n"
+
+#: optionDescriptions.h:61
+msgid "-c[<spec>], --color[=<spec>]           Color mode\n"
+msgstr "-c[<spec>], --color[=<spec>]           Modo a color\n"
+
+#: optionDescriptions.h:62
+msgid ""
+"-l, --less-mode                        As -p but also overstrike "
+"whitespace\n"
+msgstr "-l, --less-mode                        Como -p pero también tacha el espacio en blanco\n"
+
+#: optionDescriptions.h:63
+msgid "-p, --printer                          Use overstriking and bold text\n"
+msgstr "-p, --printer                          Tacha y/o resalta el texto\n"
+
+#: optionDescriptions.h:64
+msgid ""
+"-w <string>, --start-delete=<string>   String to mark begin of deleted "
+"text\n"
+msgstr "-w <cadena>, --start-delete=<cadena>   Cadena para marcar el inicio de texto suprimido\n"
+
+#: optionDescriptions.h:65
+msgid ""
+"-x <string>, --stop-delete=<string>    String to mark end of deleted text\n"
+msgstr "-x <cadena>, --stop-delete=<cadena>    Cadena para mostrar al final de texto suprimido\n"
+
+#: optionDescriptions.h:66
+msgid ""
+"-y <string>, --start-insert=<string>   String to mark begin of inserted "
+"text\n"
+msgstr "-y <cadena>, --start-insert=<cadena>   Cadena para mostrar al inicio de texto añadido\n"
+
+#: optionDescriptions.h:67
+msgid ""
+"-z <string>, --stop-insert=<string>    String to mark end of inserted text\n"
+msgstr "-z <cadena>, --stop-insert=<cadena>    Cadena para marcar el final de texto añadido\n"
+
+#: optionDescriptions.h:68
+msgid "-R, --repeat-markers                   Repeat markers at newlines\n"
+msgstr "-R, --repeat-markers                   Repite marcadores en retornos de carro\n"
+
+#: optionDescriptions.h:72
+msgid "-r, --reverse                          Format new as old\n"
+msgstr "-r, --reverse                          Presentar texto nuevo como precedente\n"
+
+#: optionDescriptions.h:57
+msgid "-A <alg>, --algorithm=<alg>            Choose algorithm: best, normal, fast\n"
+msgstr ""
+
+#: option.c:38
+msgid "Black"
+msgstr "Negro"
+
+#: option.c:39
+msgid "Red"
+msgstr "Rojo"
+
+#: option.c:40
+msgid "Green"
+msgstr "Verde"
+
+#: option.c:41
+msgid "Brown"
+msgstr "Brown"
+
+#: option.c:42
+msgid "Blue"
+msgstr "Azul"
+
+#: option.c:43
+msgid "Magenta"
+msgstr "Magenta"
+
+#: option.c:44
+msgid "Cyan"
+msgstr "Cian"
+
+#: option.c:45
+msgid "Gray"
+msgstr "Gris"
+
+#: option.c:46
+msgid "Dark gray"
+msgstr "Gris oscuro"
+
+#: option.c:47
+msgid "Bright red"
+msgstr "Rojo brillante"
+
+#: option.c:48
+msgid "Bright green"
+msgstr "Verde brillante"
+
+#: option.c:49
+msgid "Yellow"
+msgstr "Amarillo"
+
+#: option.c:50
+msgid "Bright blue"
+msgstr "Azul brillante"
+
+#: option.c:51
+msgid "Bright magenta"
+msgstr "Magenta brillante"
+
+#: option.c:52
+msgid "Bright cyan"
+msgstr "Cian brillante"
+
+#: option.c:53
+msgid "White"
+msgstr "Blanco"
+
+#: option.c:88
+#, c-format
+msgid "Single backslash at end of %s argument\n"
+msgstr "Barra invertida al final del argumento %s\n"
+
+#. TRANSLATORS:
+#. The %s argument is a long option name without preceding dashes.
+#: option.c:140 option.c:147
+#, c-format
+msgid "Invalid hexadecimal escape sequence in %s argument\n"
+msgstr "Secuencia de escape hexadecimal no válida en el argumento %s\n"
+
+#. TRANSLATORS:
+#. The %c argument will be either 'u' or 'U'. The %s argument is a long
+#. option name without preceding dashes.
+#: option.c:181 option.c:187
+#, c-format
+msgid "Too short \\%c escape in %s argument\n"
+msgstr "Escape \\%c demasiado corto en %s argumento\n"
+
+#. TRANSLATORS:
+#. The %s argument is a long option name without preceding dashes.
+#: option.c:198
+#, c-format
+msgid "\\U escape out of range in %s argument\n"
+msgstr "escape \\U escape fuera de rango en %s argumento\n"
+
+#. TRANSLATORS:
+#. The %s argument is a long option name without preceding dashes.
+#: option.c:203
+#, c-format
+msgid "\\%c escapes for surrogate codepoints are not allowed in %s argument\n"
+msgstr ""
+
+#: option.c:273 option.c:373 option.c:381
+msgid "Whitespace and delimiter sets overlap\n"
+msgstr "Se solapan conjuntos de espacios en blanco y delimitadores\n"
+
+#: option.c:445 option.c:647
+#, c-format
+msgid "Invalid color specification %s\n"
+msgstr "Color especificado no válido %s\n"
+
+#: option.c:458 option.c:470
+#, c-format
+msgid "Invalid color %s\n"
+msgstr "Color inválido %s\n"
+
+#: option.c:445
+#, c-format
+msgid "Invalid background color %s\n"
+msgstr "Color de fondo inválido %s\n"
+
+#: option.c:523
+#, c-format
+msgid "Usage: dwdiff [OPTIONS] <OLD FILE> <NEW FILE>\n"
+msgstr "Modo de uso: dwdiff [OPCIONES] <ARCHIVO PRECEDENTE> <ARCHIVO NUEVO>\n"
+
+#: option.c:564
+#, c-format
+msgid "Option %.*s is only supported for UTF-8 mode\n"
+msgstr "La opción %.*s solo es soportada en modo UTF-8\n"
+
+#: option.c:567
+#, c-format
+msgid "Support for option %.*s is not compiled into this version of dwdiff\n"
+msgstr "El soporte a la opción %.*s no se compiló para la presente versión de dwdiff\n"
+
+#: option.c:574 option.c:585 option.c:604
+#, c-format
+msgid "Option %.*s is not supported\n"
+msgstr "La opción %.*s no tiene soporte\n"
+
+#: option.c:613
+msgid "Can't read both files from standard input\n"
+msgstr "No se puede leer ambos archivos desde la entrada estándar\n"
+
+#: option.c:617 option.c:712
+msgid "Too many files to compare\n"
+msgstr "Demasiados archivos a comparar\n"
+
+#. TRANSLATORS:
+#. "Name" and "Description" are table headings for the color name list.
+#. Make sure you keep the alignment of the headings over the text.
+#: option.c:636
+msgid "Name            Description\n"
+msgstr "Nombre            Descripción\n"
+
+#: option.c:641
+msgid "The colors black through gray are also usable as background color\n"
+msgstr "Los colores negro a gris pueden usarse también como color de fondo\n"
+
+#: option.c:689
+#, c-format
+msgid "Error opening temporary output file: %s\n"
+msgstr "Error al abrir el archivo de salida temporal: %s\n"
+
+#: option.c:718
+msgid "Only one input file accepted with --diff-input\n"
+msgstr "Sólo se admite archivo de entrada aceptó con --diff-input\n"
+
+#: util.c:38
+msgid "Out of memory"
+msgstr "Fuera de memora"
+
+#: option.c:681
+msgid "Invalid algorithm name\n"
+msgstr ""
