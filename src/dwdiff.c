@@ -423,6 +423,10 @@ void splitDiffInput(void) {
 	TempFile *oldFile, *newFile;
 	DiffInputMode mode = FIRST_HEADER;
 
+	/* when --diff-input is used option.oldFile.name
+	will be NULL and option.oldFile.input will be a file stream
+	to the diff.
+	See option.c for details */
 	if (option.oldFile.name == NULL) {
 		input = option.oldFile.input;
 	} else {
@@ -433,23 +437,45 @@ void splitDiffInput(void) {
 	oldFile = tempFile();
 	newFile = tempFile();
 
-	while (getNextCharSC(input)) {
+	/* 
+	Iterate over the characters of the input.
+	We switch on the current "mode" (1st time through it'll be FIRST_HEADER).
+	In each case block we first take the current character and either:
+		* sputc to newFile->stream and/or oldFile->stream
+		* putchar
+	When the character is a newline we set the mode to FIRST.
+	If the mode is FIRST we analize the character under the belief 
+		that it will contain one of the initial lines from a diff
+		which tells us what kind of line we're dealing with:
+		NEW, OLD, or COMMON.  E.g. a line that has something added, 
+		removed, or is common between the two files.
+
+		When doing the sputc in this block all the special characters
+		are replaced with a space. [It's not clear to me why we bother 
+		with a sputc at all in this case. -masukomi]
+
+	*/
+	while (getNextCharSC(input)) { 
+		// iterate over the characters of the input
 		switch (mode) {
-			case FIRST_HEADER:
-				putchar(charData.singleChar);
+			case FIRST_HEADER: // this is the state mode is initialized in
+				putchar(charData.singleChar); // putchar to STDOUT
 				mode = charData.singleChar != '@' ? HEADER : LINE_COUNTS;
 				break;
 			case FIRST:
+				// SOMETHING ADDED
 				if (charData.singleChar == '+') {
 					sputc(newFile->stream, ' ');
 					mode = NEW;
+				// SOMETHING REMOVED
 				} else if (charData.singleChar == '-') {
 					sputc(oldFile->stream, ' ');
-					mode = OLD;
+					mode = OLD; 
+				// LINE WITHOUT CHANGE
 				} else if (charData.singleChar == ' ') {
 					sputc(oldFile->stream, ' ');
 					sputc(newFile->stream, ' ');
-					mode = COMMON;
+					mode = COMMON; 
 				} else {
 					closeTempFile(oldFile);
 					closeTempFile(newFile);
@@ -464,33 +490,34 @@ void splitDiffInput(void) {
 					newFile = tempFile();
 
 					putchar(charData.singleChar);
+					// "Second verse: same as the first."
 					mode = charData.singleChar == '@' ? LINE_COUNTS : HEADER;
 				}
 				break;
-			case OLD:
+			case OLD: // sputc to oldFile stream
 				sputc(oldFile->stream, charData.singleChar);
 				if (charData.singleChar == '\n')
 					mode = FIRST;
 				break;
-			case NEW:
+			case NEW: // sputc to newFile stream
 				sputc(newFile->stream, charData.singleChar);
 				if (charData.singleChar == '\n')
 					mode = FIRST;
 				break;
-			case COMMON:
+			case COMMON: // sputc to both
 				sputc(oldFile->stream, charData.singleChar);
 				sputc(newFile->stream, charData.singleChar);
 				if (charData.singleChar == '\n')
 					mode = FIRST;
 				break;
 
-			case HEADER:
+			case HEADER: // putchar to STDOUT
 				putchar(charData.singleChar);
 				if (charData.singleChar == '\n')
 					mode = FIRST_HEADER;
 				break;
 
-			case LINE_COUNTS:
+			case LINE_COUNTS: // putchar to STDOUT
 				putchar(charData.singleChar);
 				if (charData.singleChar == '\n')
 					mode = FIRST;
